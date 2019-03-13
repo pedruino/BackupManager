@@ -1,0 +1,33 @@
+﻿<UserControl x:Class="BackupManager.UI.Controls.NumericUpDown"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             mc:Ignorable="d" MinHeight="30">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="60"/>
+        </Grid.ColumnDefinitions>
+        <TextBox x:Name="PART_NumericTextBox" x:FieldModifier="private" VerticalAlignment="Center"
+                 Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, Path=Value, Mode=OneWayToSource}"
+                 Margin="0, 4, 0,0" />
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="30*"/>
+                <RowDefinition Height="30*"/>
+            </Grid.RowDefinitions>
+            <Grid>
+                <Button x:Name="PART_IncreaseButton" x:FieldModifier="private" Click="Increment" Height="16" Padding="0">
+                    <materialDesign:PackIcon Kind="MenuUp" Height="18" Width="32" Foreground="#89000000"/>
+                </Button>
+            </Grid>
+            <Grid Grid.Row="1">
+                <Button x:Name="PART_DecreaseButton" x:FieldModifier="private" Click="Decrement" Height="16" Padding="0">
+                    <materialDesign:PackIcon Kind="MenuDown" Height="18" Width="32" Foreground="#89000000"/>
+                </Button>
+            </Grid>
+        </Grid>
+    </Grid>
+</UserControl>
