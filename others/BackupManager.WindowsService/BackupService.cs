@@ -1,6 +1,7 @@
 ﻿using BackupManager.Domain.Interfaces;
 using BackupManager.Domain.Services;
 using Quartz;
+using Quartz.Impl;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -9,6 +10,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.ServiceProcess;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace BackupManager.WindowsService
 {
@@ -39,11 +41,14 @@ namespace BackupManager.WindowsService
     {
         private const string BACKUP_SERVICE_NAME = "Inovatech Backup Service";
         private const string EVENT_LOG_NAME = "Backup Service Log";
+        private readonly IScheduler _scheduler;
+        private readonly ISettings _settings;
         private IBackupService _backupService;
-        private ISettings _settings;
 
         public BackupService()
         {
+            _scheduler = new StdSchedulerFactory().GetScheduler().GetAwaiter().GetResult();
+
             InitializeComponent();
 
             eventLog1 = new System.Diagnostics.EventLog();
@@ -61,7 +66,7 @@ namespace BackupManager.WindowsService
             var directory = Path.GetDirectoryName(path);
             var settingsService = new SettingsService(directory, "settings.json", false);
             _settings = settingsService.Load();
-            _backupService = new BackupManager.Domain.Services.BackupService(_settings);
+            //_backupService = new BackupManager.Domain.Services.BackupService(TODO, _settings, null);
         }
 
         protected override void OnStart(string[] args)
@@ -121,8 +126,49 @@ namespace BackupManager.WindowsService
         {
             var time = _settings.Schedule.Time;
             var days = GetSystemDaysOfWeek(_settings.Schedule.DaysOfWeek).ToArray();
+
             var scheduleBuilder = CronScheduleBuilder.AtHourAndMinuteOnGivenDaysOfWeek(time.Hour, time.Minute, days);
-            var trigger = TriggerBuilder.Create().StartNow().WithSchedule(scheduleBuilder).Build();
+
+            var job = JobBuilder
+                .Create<BackupJob>()
+                .WithIdentity(typeof(BackupJob).Name, SchedulerConstants.DefaultGroup)
+                .Build();
+
+            var triggerName = string.Join(",", days);
+
+            var trigger = TriggerBuilder
+                .Create()
+                .WithIdentity(triggerName, SchedulerConstants.DefaultGroup)
+                .ForJob(job)
+                .StartNow()
+                .WithSchedule(scheduleBuilder)
+                .Build();
+
+            _scheduler.ScheduleJob(job, trigger);
+        }
+    }
+
+    internal class BackupJob : IJob
+    {
+        private readonly IBackupService _backupService;
+        private readonly ISettings _settings;
+
+        public BackupJob(IBackupService backupService, ISettings settings)
+        {
+            _settings = settings;
+            _backupService = backupService;
+        }
+
+        public async Task Execute(IJobExecutionContext context)
+        {
+            //var fileInfo = await _backupService.CreateBackupFileAsync();
+            //var success = await _backupService.UploadFile(fileInfo, _settings.Customer.Hash);
+
+            //_backupService.UploadFile(fileInfo, _settings.Customer.Hash).ContinueWith((task) =>
+            //{
+                
+            //});
+            return ;
         }
     }
 }

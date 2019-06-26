@@ -1,10 +1,13 @@
-﻿using System.Security.Cryptography;
+﻿using System;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace BackupManager.Domain.Services
 {
     public class HashService
     {
+        private const string SALT_KEY = "Inovatech Soluções Tecnológicas";
+
         public static bool CompareByteArrays(byte[] array1, byte[] array2)
         {
             if (array1.Length != array2.Length)
@@ -39,20 +42,28 @@ namespace BackupManager.Domain.Services
         public static byte[] GenerateSaltedHash(byte[] plainText, byte[] salt)
         {
             HashAlgorithm algorithm = new MD5Cng();
+            var saltWithPlainTextBytes = new byte[salt.Length + plainText.Length];
 
-            byte[] plainTextWithSaltBytes =
-                new byte[plainText.Length + salt.Length];
-
-            for (int i = 0; i < plainText.Length; i++)
+            for (var i = 0; i < salt.Length; i++)
             {
-                plainTextWithSaltBytes[i] = plainText[i];
-            }
-            for (int i = 0; i < salt.Length; i++)
-            {
-                plainTextWithSaltBytes[plainText.Length + i] = salt[i];
+                saltWithPlainTextBytes[i] = salt[i];
             }
 
-            return algorithm.ComputeHash(plainTextWithSaltBytes);
+            for (var i = 0; i < plainText.Length; i++)
+            {
+                saltWithPlainTextBytes[salt.Length + i] = plainText[i];
+            }
+
+            return algorithm.ComputeHash(saltWithPlainTextBytes);
+        }
+
+        public static string GenerateSaltedHash(string password)
+        {
+            var provider = MD5.Create();
+            var bytes = provider.ComputeHash(Encoding.UTF8.GetBytes(SALT_KEY + password));
+            var computedHash = BitConverter.ToString(bytes);
+
+            return computedHash.Replace("-", string.Empty).ToLower();
         }
     }
 }

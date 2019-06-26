@@ -1,27 +1,16 @@
-﻿using System.Globalization;
-using System.Threading;
+﻿using Hardcodet.Wpf.TaskbarNotification;
 using System.Windows;
-using System.Windows.Markup;
 
 namespace BackupManager.App
 {
-    /// <inheritdoc />
-    /// <summary>
-    /// Interaction logic for App.xaml
-    /// </summary>
     public partial class App : Application
     {
-        protected override void OnStartup(StartupEventArgs e)
+        private TaskbarIcon _notifyIcon;
+
+        protected override void OnExit(ExitEventArgs e)
         {
-            IoC.IoCSetup.SetupProvider();
-
-            var isAuthorized = DoLogin();
-            if (isAuthorized)
-            {
-                base.OnStartup(e);
-            }
-
-            SetCulture();
+            _notifyIcon.Dispose(); //the icon would clean up automatically, but this is cleaner
+            base.OnExit(e);
         }
 
         private static bool DoLogin()

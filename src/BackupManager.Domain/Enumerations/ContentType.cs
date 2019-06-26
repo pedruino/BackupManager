@@ -1,4 +1,4 @@
-﻿using BackupManager.Domain.Globalization;
+﻿using BackupManager.Domain.Infra.Globalization;
 
 namespace BackupManager.Domain.Enumerations
 {

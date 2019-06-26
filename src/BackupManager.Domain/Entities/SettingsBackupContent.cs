@@ -19,6 +19,8 @@ namespace BackupManager.Domain.Entities
             set => SetProperty(ref _contentType, value);
         }
 
+        public string DatabaseInstallPath { get; set; }
+
         public string FullPath
         {
             get => _fullPath;

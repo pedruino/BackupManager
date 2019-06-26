@@ -52,14 +52,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="System.Configuration" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Net.Http" />
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
@@ -68,51 +62,22 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
-    <ApplicationDefinition Include="App.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </ApplicationDefinition>
-    <Compile Include="Converters\EnumToBooleanConverter.cs" />
-    <Compile Include="Converters\EnumToBooleanMutiValueConverter.cs" />
-    <Compile Include="Converters\FlagCheckConverter.cs" />
-    <Compile Include="Converters\BoolMultiConditionVisibilityConverter.cs" />
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Job\BackupJob.cs" />
+    <Compile Include="Job\DemoJob.cs" />
     <Compile Include="Properties\EnumResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>EnumResources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Extensions\EnumerationExtension.cs" />
-    <Compile Include="Templates\ScheduleTemplateSelector.cs" />
-    <Compile Include="Views\LoginView.xaml.cs">
-      <DependentUpon>LoginView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="ViewModels\SettingsCustomerViewModel.cs" />
-    <Compile Include="ViewModels\SettingsBackupContentViewModel.cs" />
-    <Compile Include="ViewModels\SettingsFtpViewModel.cs" />
-    <Compile Include="ViewModels\SettingsScheduleViewModel.cs" />
-    <Compile Include="ViewModels\SettingsViewModel.cs" />
-    <Page Include="Views\LoginView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="MainWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Compile Include="App.xaml.cs">
-      <DependentUpon>App.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ViewModels\DownloadsViewModel.cs" />
     <Compile Include="IoC\IoCSetup.cs" />
     <Compile Include="IoC\NinjectServiceLocator.cs" />
-    <Compile Include="MainWindow.xaml.cs">
-      <DependentUpon>MainWindow.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="App.Scheduler.cs" />
+    <Compile Include="App.Startup.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -166,24 +131,40 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="AvalonLibrary">
-      <Version>2.3.0</Version>
-    </PackageReference>
     <PackageReference Include="FluentWPF">
       <Version>0.6.1</Version>
+    </PackageReference>
+    <PackageReference Include="Hardcodet.NotifyIcon.Wpf">
+      <Version>1.0.8</Version>
     </PackageReference>
     <PackageReference Include="MaterialDesignColors">
       <Version>1.1.3</Version>
     </PackageReference>
     <PackageReference Include="MaterialDesignThemes">
-      <Version>2.5.0.1205</Version>
+      <Version>2.5.1</Version>
     </PackageReference>
     <PackageReference Include="Ninject">
       <Version>3.3.4</Version>
     </PackageReference>
+    <PackageReference Include="NLog">
+      <Version>4.6.2</Version>
+    </PackageReference>
     <PackageReference Include="Prism.Wpf">
       <Version>7.1.0.431</Version>
     </PackageReference>
+    <PackageReference Include="Quartz">
+      <Version>3.0.7</Version>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="ViewModels\" />
+    <Folder Include="Views\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

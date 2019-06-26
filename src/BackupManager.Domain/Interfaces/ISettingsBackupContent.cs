@@ -1,5 +1,5 @@
-﻿using System.ComponentModel;
-using BackupManager.Domain.Enumerations;
+﻿using BackupManager.Domain.Enumerations;
+using System.ComponentModel;
 
 namespace BackupManager.Domain.Interfaces
 {

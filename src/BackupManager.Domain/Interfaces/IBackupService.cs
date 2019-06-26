@@ -1,10 +1,14 @@
 ﻿using BackupManager.Domain.Entities;
 using System.Collections.Generic;
+using System.IO.Abstractions;
+using System.Threading.Tasks;
 
 namespace BackupManager.Domain.Interfaces
 {
     public interface IBackupService
     {
+        Task<IFileInfo> CreateBackupFileAsync();
+
         /// <summary>
         /// Downloads a selected backup file.
         /// </summary>
@@ -24,5 +28,7 @@ namespace BackupManager.Domain.Interfaces
         /// </summary>
         /// <returns>If remote path is valid path and contains files, returns a enumeration of backup files, otherwise a empty enumeration.</returns>
         IEnumerable<BackupFile> GetBackupFiles();
+
+        Task<bool> UploadFile(IFileInfo fileInfo, string remotePath);
     }
 }

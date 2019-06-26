@@ -1,0 +1,152 @@
+﻿<Window x:Class="BackupManager.UI.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:t="clr-namespace:BackupManager.UI.Properties"
+        xmlns:viewModels="clr-namespace:BackupManager.UI.ViewModels"
+        xmlns:enumerations="clr-namespace:BackupManager.Domain.Enumerations;assembly=BackupManager.Domain"
+        xmlns:controls="clr-namespace:BackupManager.UI.Controls"
+        xmlns:views="clr-namespace:BackupManager.UI.Views"
+        mc:Ignorable="d" d:DataContext="{d:DesignInstance viewModels:MainWindowViewModel}"
+        Height="350" Width="500">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../ResourceStyles/Styles.xaml" />
+                <ResourceDictionary>
+                </ResourceDictionary>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+    <DockPanel LastChildFill="True">
+        <Grid Height="50" DockPanel.Dock="Top" Background="LightGray">
+            <Grid.Effect>
+                <DropShadowEffect BlurRadius="1" ShadowDepth="1" Color="#FFACACAC" />
+            </Grid.Effect>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <materialDesign:PopupBox PlacementMode="BottomAndAlignRightEdges" StaysOpen="False" Margin="10">
+                    <StackPanel Width="150">
+                        <Button Content="{x:Static t:Resources.About}" />
+                        <Button Content="{x:Static t:Resources.Help}" />
+                        <Button Content="{x:Static t:Resources.SendFeedback}" />
+                        <Separator />
+                        <Button Command="{Binding ResumePauseCommand}">
+                            <Button.Content>
+                                <ContentControl>
+                                    <ContentControl.Style>
+                                        <Style TargetType="ContentControl">
+                                            <Setter Property="Content" Value="{x:Static t:Resources.Pause}"></Setter>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding ApplicationState}" Value="{x:Static enumerations:ApplicationState.Paused}">
+                                                    <Setter Property="Content" Value="{x:Static t:Resources.Resume}"></Setter>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </ContentControl.Style>
+                                </ContentControl>
+                            </Button.Content>
+                        </Button>
+                        <Button Content="{x:Static t:Resources.Preferences}" Click="ButtonBase_OnClick" MouseRightButtonUp="ButtonBase_OnClick" />
+                        <Separator />
+                        <Button Content="{x:Static t:Resources.Quit}" />
+                    </StackPanel>
+                </materialDesign:PopupBox>
+            </StackPanel>
+            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20" Text="{x:Static t:Resources.ApplicationTitle}" />
+        </Grid>
+
+        <DockPanel LastChildFill="True"  DockPanel.Dock="Bottom">
+            <StatusBar DockPanel.Dock="Bottom">
+                <StatusBar.Style>
+                    <Style TargetType="StatusBar">
+                        <Setter Property="Visibility" Value="Visible"></Setter>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding AccountVM, NotifyOnSourceUpdated=True}" Value="{x:Null}">
+                                <Setter Property="Visibility" Value="Collapsed"></Setter>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </StatusBar.Style>
+                <StatusBarItem HorizontalAlignment="Right">
+                    <StatusBarItem.Resources>
+                        <DataTemplate x:Key="StatusBarApplicationRunning">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                <StatusBarItem>
+                                    <TextBlock>
+                                        <TextBlock.Text>
+                                            <MultiBinding StringFormat="{x:Static t:Messages.UpdatedTimeAgo}" Mode="OneWay">
+                                                <Binding Path="DataContext.LastSync" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}"/>
+                                            </MultiBinding>
+                                        </TextBlock.Text>
+                                    </TextBlock>
+                                </StatusBarItem>
+                                <StatusBarItem>
+                                    <materialDesign:PackIcon Kind="CheckCircle" />
+                                </StatusBarItem>
+                            </StackPanel>
+                        </DataTemplate>
+
+                        <DataTemplate x:Key="StatusBarApplicationPaused">
+                            <StackPanel Orientation="Horizontal">
+                                <StatusBarItem Content="{x:Static t:EnumResources.ApplicationState_Paused}" />
+                                <StatusBarItem>
+                                    <materialDesign:PackIcon Kind="Sync" />
+                                </StatusBarItem>
+                            </StackPanel>
+                        </DataTemplate>
+                    </StatusBarItem.Resources>
+                    <StatusBarItem.Content>
+                        <ContentControl>
+                            <ContentControl.Style>
+                                <Style TargetType="ContentControl">
+                                    <Setter Property="ContentTemplate" Value="{StaticResource StatusBarApplicationRunning}" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding ApplicationState}" Value="{x:Static enumerations:ApplicationState.Paused}">
+                                            <Setter Property="ContentTemplate" Value="{StaticResource StatusBarApplicationPaused}" />
+                                            <Setter Property="Content">
+                                                <Setter.Value>
+                                                    <materialDesign:PackIcon Kind="Sync" />
+                                                </Setter.Value>
+                                            </Setter>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ContentControl.Style>
+                        </ContentControl>
+                    </StatusBarItem.Content>
+                </StatusBarItem>
+            </StatusBar>
+            <ContentControl DockPanel.Dock="Top">
+                <ContentControl.Resources>
+                    <DataTemplate DataType="{x:Type viewModels:AuthenticationViewModel}">
+                        <controls:LoginView></controls:LoginView>
+                    </DataTemplate>
+                    <DataTemplate DataType="{x:Type viewModels:AccountViewModel}">
+                        <controls:AccountView DataContext="{Binding}"></controls:AccountView>
+                    </DataTemplate>
+                </ContentControl.Resources>
+                <ContentControl.Content>
+                    <Binding Path="CurrentViewModel">
+                        <Binding.TargetNullValue>
+                            <StackPanel Margin="20">
+                                <Ellipse Style="{StaticResource BrandProfileStyle}" Margin="0, 0, 0, 10">
+                                    <Ellipse.Fill>
+                                        <ImageBrush>
+                                            <ImageBrush.ImageSource>
+                                                <BitmapImage UriSource="../Images/squared.jpg" DecodePixelHeight="1289" />
+                                            </ImageBrush.ImageSource>
+                                        </ImageBrush>
+                                    </Ellipse.Fill>
+                                </Ellipse>
+                                <Label Content="{x:Static t:Resources.BackupAndSync}" HorizontalAlignment="Center" Margin="0, 0, 0, 10" />
+                                <Button Width="100" Content="{x:Static t:Resources.SignIn}" Command="{Binding DataContext.SignInCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" />
+                            </StackPanel>
+                        </Binding.TargetNullValue>
+                    </Binding>
+                </ContentControl.Content>
+            </ContentControl>
+        </DockPanel>
+    </DockPanel>
+</Window>

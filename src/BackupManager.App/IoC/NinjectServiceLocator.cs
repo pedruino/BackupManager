@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using CommonServiceLocator;
+﻿using CommonServiceLocator;
 using Ninject;
+using System;
+using System.Collections.Generic;
 
 namespace BackupManager.App.IoC
 {
